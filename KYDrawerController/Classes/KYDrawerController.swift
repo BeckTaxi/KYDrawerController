@@ -481,7 +481,13 @@ open class KYDrawerController: UIViewController, UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         switch gestureRecognizer {
         case panGesture:
-            return drawerState == .opened
+            // Ignore pan gesture on DrawerView because causes conflict with table view
+            var containsInDrawerView = false
+            if let drawerView = drawerViewController?.view {
+                containsInDrawerView = drawerView.bounds.contains(touch.location(in: drawerView))
+            }
+            
+            return drawerState == .opened && !containsInDrawerView
         case screenEdgePanGesture:
             return screenEdgePanGestureEnabled ? drawerState == .closed : false
         default:
